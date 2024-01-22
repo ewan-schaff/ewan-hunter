@@ -1,0 +1,94 @@
+#!/usr/bin/python3
+
+import math
+import random
+import tkinter
+from sys import argv
+
+# window = tkinter.Tk()
+# window.title('my_pendu')
+# window.geometry("600x500")
+
+lose = 5
+
+def choixMot():
+    fichier=open("dico.txt","r")
+    donnees=fichier.readlines()
+    fichier.close()
+    listeMots = []
+    for element in donnees:
+        element = element.rstrip("\n")
+        listeMots.append(element)
+    i = random.randint(0, len(donnees))
+    return listeMots[i]
+
+def demanderLettre(entry):
+    str = ""
+    str = entry.upper()
+    return str
+
+def cache_mot(mot):
+    nmot = ""
+
+    for i in range(len(mot)):
+        nmot += '_'
+    return nmot
+
+def bonne_lettre(mot, entry, moustache):
+    global lose
+    passeeee = 0
+    tmp = moustache
+    moustache = []
+    for i in range(len(mot)):
+        if (mot[i] == entry):
+            moustache.append(entry)
+            passeeee = 1
+        elif (tmp[i] == '_'):
+            moustache.append('_')
+        else:
+            moustache.append(tmp[i])
+    tmp = moustache
+    if (passeeee == 0):
+        lose -= 1
+        print("il vous reste ", lose, "vie")
+    return tmp
+
+def lose_win(win, mot, moustache):
+    global lose
+    for i in range(len(moustache)):
+        if (moustache[i] != '_'):
+            win += 1
+    if (win == len(mot)):
+        print("Bravo ! (lucas) ^_^")
+        exit(0)
+    if (lose == 0):
+        print(mot)
+        print("Trop pas bon ! Bouuuuuuuuuuuuuuu °_°")
+        exit(0)
+
+def display():
+    global lose
+    moustache = []
+    mot = choixMot()
+    for i in range(len(mot)):
+        moustache.append('_')
+    motcache = cache_mot(mot)
+    entry = (input("donner une lettre : "))
+    while (entry != "END"):
+        win = 0
+        entry = demanderLettre(entry)
+        moustache = bonne_lettre(mot, entry, moustache)
+        print(*moustache)
+        lose_win(win, mot, moustache)
+        entry = (input("donner une lettre : "))
+    return 0
+
+def main():
+    if (len(argv) != 1):
+        exit(84)
+    if (len(argv) == 2 and (argv[1] == "-h" or argv[1] == "--help")):
+        return display_info()
+    return display()
+
+# window.mainloop()
+main()
